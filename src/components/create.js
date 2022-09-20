@@ -43,7 +43,7 @@ function Create() {
 
 
   const handleToken = (token) => {
-    fetch("https://13.232.102.116/payment/donate", {
+    fetch("https://stripe.binaryscript.com/payment/donate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
