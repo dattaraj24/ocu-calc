@@ -13,6 +13,8 @@ import {
     Select,
     Stack, HStack, VStack ,Input,Divider
   } from '@chakra-ui/react'
+import StripeCheckout from "react-stripe-checkout";
+
 
 
 
@@ -20,7 +22,8 @@ function Create() {
 
     const [value, setValue] = React.useState()
     const [inputList, setinputList] = useState([{firstName:"", LastName:""}]);
-    const [Total,setTotal] = useState("")
+    const [Total,setTotal] = useState("0")
+    const [Tress,setTrees] = useState("0")
 
     let items = {
         PETbottles: 13.1,
@@ -37,6 +40,21 @@ function Create() {
         Juicecartons : 6.48
 
       }
+
+
+  const handleToken = (token) => {
+    fetch("http://13.232.102.116/payment/donate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ token, Tress }),
+    })
+    .then(res => res.json())
+    .then(_ => {
+      window.alert("Transaction Successful.");
+    }).catch(_ => window.alert("Transaction Failed."))
+  }
 
     const add =(day,item)=>{
         const number = day * item
@@ -65,6 +83,7 @@ function Create() {
           const number = sum(total)
           console.log(number)
           setTotal(number)
+          setTrees( Math.round(number/ 27.77))
           console.log(Total)
             
 
@@ -105,15 +124,21 @@ plastic Footprint Calculator
   </Heading>
   </Center>
  
-
+  <Spacer/>
+  <Spacer/>
+    
 
   { inputList.map( (x,i)=> ( 
-    <Center>
+      <Center>
+      <HStack spacing='50px'direction={'column'}>
    
-   <HStack spacing='24px'>
- 
-   <Select name='firstName' placeholder='Select item'  onChange={(e) =>handleinputchange(e,i)}value= {inputList.firstName}  width='150px' maxHeight='10' >
-  <option value={items.PETbottles}>PET bottles</option>
+  
+
+
+   <Select name='firstName' placeholder='Select item'  onChange={(e) =>handleinputchange(e,i)}value= {inputList.firstName}  width='150px' maxHeight='10'  gap ="">
+    
+   
+  <option value={items.PETbottles} >PET bottles</option>
   <option value={items.Singleusebag}>Single use bag</option>
   <option value={items.singleusewrappers}>single use wrappers</option>
   <option value={items.plasticcontainers}>plastic containers</option>
@@ -127,17 +152,26 @@ plastic Footprint Calculator
   <option value={items.PlasticStraws}>Plastic Straws</option>
 </Select>
 
+
 <Input name='LastName' placeholder=' amount you use' size='md' width='180px' value={inputList.LastName} onChange={(e) =>handleinputchange(e,i)} />
 <Spacer/>
 <Button colorScheme='blue' onClick={handleremove} >Remove</Button>
  
+
+
+
+
+
+
+
+
 </HStack>
-
-
-
-
 </Center>
 ))}
+
+
+
+
 <Center>
 
 <Box
@@ -165,8 +199,26 @@ plastic Footprint Calculator
 <Center>
 <Heading as='h1' size='xl' fontSize='50px' noOfLines={1}>
 Your Yearly Plastic Footprint is : {Total} kg
+
   </Heading>
+  
   </Center>
+
+  <Center><Heading as='h1' size='xl' fontSize='50px' noOfLines={1}>
+Trees Need to be Planted : {Math.round(Total/ 28)} trees
+
+  </Heading></Center>
+
+  <StripeCheckout
+          stripeKey={"pk_test_51LkAtbSEbhdFgXVIh8G47iU6osdYIwCa00bz3Cc4Vnhl795sd7UkLWE2XWI6gV7CZ2JP4L3YMBDoXPCnfGMejggP00H8Z9dM4M"}
+          token={handleToken}
+          name=""
+          panelLabel={`Donate`}
+          currency="USD"
+          amount={Tress* 100}
+      >
+         
+      </StripeCheckout>
 
 
 
