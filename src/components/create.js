@@ -43,7 +43,7 @@ function Create() {
 
 
   const handleToken = (token) => {
-    fetch("http://13.232.102.116/payment/donate", {
+    fetch("https://13.232.102.116/payment/donate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
